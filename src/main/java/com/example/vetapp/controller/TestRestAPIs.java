@@ -13,8 +13,8 @@ public class TestRestAPIs {
     return ">>> User Contents!";
   }
   
-  @GetMapping("/api/test/pm")
-  @PreAuthorize("hasRole('PM') or hasRole('ADMIN')")
+  @GetMapping("/api/test/doctor")
+  @PreAuthorize("hasRole('DOCTOR') or hasRole('ADMIN')")
   public String projectManagementAccess() {
     return ">>> Board Management Project";
   }
