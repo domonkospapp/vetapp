@@ -24,7 +24,7 @@ public class RoleController {
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "/{userId}/roles", method = RequestMethod.POST)
     public User addRole(
-    	@PathVariable("userId") String userId,
+    	@PathVariable("userId") Long userId,
     	@RequestParam(value="roleName") String roleName
     ){
     	return roleService.save(userId, roleName);
@@ -33,7 +33,7 @@ public class RoleController {
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/{userId}/roles", method = RequestMethod.GET)
     public List<Role> getRoles(
-        	@PathVariable("userId") String userId
+        	@PathVariable("userId") Long userId
     ){
     	return roleService.get(userId); 
     }
@@ -41,7 +41,7 @@ public class RoleController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
 	@RequestMapping(value = "/{userId}/roles/{roleId}", method = RequestMethod.DELETE)
     public void deleteMember(
-    		@PathVariable("userId") String userId,
+    		@PathVariable("userId") Long userId,
     		@PathVariable("roleId") String roleId
     ) {
     	roleService.delete(userId, roleId); 
