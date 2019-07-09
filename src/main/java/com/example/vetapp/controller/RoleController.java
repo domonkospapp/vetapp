@@ -22,29 +22,29 @@ public class RoleController {
 	RoleService roleService;
 	
     @ResponseStatus(HttpStatus.CREATED)
-    @RequestMapping(value = "/{userId}/roles", method = RequestMethod.POST)
+    @RequestMapping(value = "/{username}/roles", method = RequestMethod.POST)
     public User addRole(
-    	@PathVariable("userId") Long userId,
+    	@PathVariable("username") String username,
     	@RequestParam(value="roleName") String roleName
     ){
-    	return roleService.save(userId, roleName);
+    	return roleService.save(username, roleName);
     }
     
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/{userId}/roles", method = RequestMethod.GET)
+    @RequestMapping(value = "/{username}/roles", method = RequestMethod.GET)
     public List<Role> getRoles(
-        	@PathVariable("userId") Long userId
+        	@PathVariable("username") String username
     ){
-    	return roleService.get(userId); 
+    	return roleService.get(username); 
     }
     
     @ResponseStatus(HttpStatus.NO_CONTENT)
 	@RequestMapping(value = "/{userId}/roles/{roleId}", method = RequestMethod.DELETE)
     public void deleteMember(
-    		@PathVariable("userId") Long userId,
+    		@PathVariable("username") String username,
     		@PathVariable("roleId") String roleId
     ) {
-    	roleService.delete(userId, roleId); 
+    	roleService.delete(username, roleId); 
     }
 
 }

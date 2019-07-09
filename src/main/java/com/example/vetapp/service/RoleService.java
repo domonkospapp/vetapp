@@ -19,17 +19,17 @@ public class RoleService {
 		this.userRepository = userRepository;
 	}
 
-	public User save(Long userId, String roleName) {
+	public User save(String username, String roleName) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public List<Role> get(Long userId) {
+	public List<Role> get(String username) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public void delete(Long userId, String roleId) {
+	public void delete(String username, String roleId) {
 		// TODO Auto-generated method stub
 		
 	}
