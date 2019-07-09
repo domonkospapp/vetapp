@@ -7,23 +7,16 @@ import org.springframework.stereotype.Service;
 
 import com.example.vetapp.model.Role;
 import com.example.vetapp.model.User;
-import com.example.vetapp.repository.RoleRepository;
+import com.example.vetapp.repository.UserRepository;
 
 @Service
 public class RoleService {
 	
-	RoleRepository roleRepository;
+	UserRepository userRepository;
 	
 	@Autowired
-	public void setRoleRepository(RoleRepository roleRepository) {
-		this.roleRepository = roleRepository;
-	}
-	
-	UserService userService;
-	
-	@Autowired
-	public void setUserService(UserService userService) {
-		this.userService = userService;
+	public void setUserRepository(UserRepository userRepository) {
+		this.userRepository = userRepository;
 	}
 
 	public User save(Long userId, String roleName) {
