@@ -1,5 +1,7 @@
 package com.example.vetapp.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -35,6 +37,10 @@ public class UserService {
 			return userRepository.save(user);
 		}
 		throw new PermissionDeniedException("Not allowed!");
+	}
+
+	public List<User> getAll() {
+		return userRepository.findAll();
 	}
 
 }

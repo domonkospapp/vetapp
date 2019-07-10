@@ -114,6 +114,16 @@ public class UserControllerIntegrationTest {
         assertEquals(otherUser.getAddress(), otherUserFromDB.getAddress());
     }
     
+    @Test
+    public void admin_can_get_users() throws Exception {
+    	HttpHeaders headers = creteHeader("Authorization", "Bearer " + adminToken);
+        HttpEntity<String> entity = new HttpEntity<String>(null, headers);
+        
+        ResponseEntity<String> response =restTemplate.exchange(createURLWithPort("users"), HttpMethod.GET, entity, String.class);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(2, userRepository.findAll().size());
+    }
+    
     private String obtainAccessToken(String username, String password) throws Exception {
     	HttpHeaders headers = creteHeader("Content-Type", "application/json");
     	String body = "{\"username\":\"" + username + "\", \"password\": \"" + password + "\"}";
