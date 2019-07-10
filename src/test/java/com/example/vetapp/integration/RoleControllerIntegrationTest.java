@@ -2,7 +2,9 @@ package com.example.vetapp.integration;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.After;
@@ -82,7 +84,7 @@ public class RoleControllerIntegrationTest {
         Set<Role> roles = userRepository.findByUsername(username).getRoles();
         roles.forEach(role -> {
         	assertEquals("ROLE_USER" , role.getName().toString());
-        });        
+        });
     }
     
     @Test
@@ -101,6 +103,31 @@ public class RoleControllerIntegrationTest {
                 
         Set<Role> roles = userRepository.findByUsername(username).getRoles();
         assertEquals(3 , roles.size());  
+    }
+    
+    @Test
+    public void admin_can_delete_role() throws Exception {
+    	//create test user
+    	String username = "user_with_roles";
+        User user = new User("User With Roles", username, "user2@gmail.com", encoder.encode(password));
+        Role userRole = roleRepository.findByName(RoleName.ROLE_USER).orElseThrow(() -> new RuntimeException("Fail! -> Cause: User Role not find."));                
+        Role doctorRole = roleRepository.findByName(RoleName.ROLE_DOCTOR).orElseThrow(() -> new RuntimeException("Fail! -> Cause: Doctor Role not find."));                
+        Set<Role> roles = new HashSet<>();
+        roles.add(userRole);
+        roles.add(doctorRole);
+        user.setRoles(roles);
+        userRepository.save(user);
+                
+        HttpHeaders headers = creteHeader("Content-Type", "application/json");
+    	headers.add("Authorization", "Bearer " + adminToken);
+        HttpEntity<?> entity = new HttpEntity<Object>(headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("users/" + user.getUsername() + "/roles/" + "doctor"), HttpMethod.DELETE, entity, String.class);
+        Set<Role> rolesFromBD = userRepository.findByUsername(username).getRoles();
+
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        assertEquals(1 , rolesFromBD.size());
+        assertEquals(RoleName.ROLE_USER, rolesFromBD.stream().findFirst().get().getName());
     }
     
     private String obtainAccessToken(String username, String password) throws Exception {
