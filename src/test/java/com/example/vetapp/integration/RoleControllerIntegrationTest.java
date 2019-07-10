@@ -22,8 +22,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
 import com.example.vetapp.model.Role;
 import com.example.vetapp.model.RoleName;
@@ -70,33 +68,21 @@ public class RoleControllerIntegrationTest {
     
     @Test
     public void admin_can_add_role() throws Exception {
-        User user = new User("User Without Roles", "user_roleless", "user2@gmail.com", encoder.encode(password));
+    	String username = "user_roleless";
+        User user = new User("User Without Roles", username, "user2@gmail.com", encoder.encode(password));
         userRepository.save(user);
-        
         
         HttpHeaders headers = creteHeader("Content-Type", "application/json");
     	headers.add("Authorization", "Bearer " + adminToken); 
-    	//String body = "{\"roleName\":\"user\"}";
-    	
-    	MultiValueMap<String, String> body = new LinkedMultiValueMap<String, String>();     
-
-    	body.add("roleName", "user");
-
-        HttpEntity<?> entity = new HttpEntity<Object>(body, headers);
+        HttpEntity<?> entity = new HttpEntity<Object>(headers);
         
-  
-        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("users/user_roleless/roles?roleName=user"), HttpMethod.POST, entity, String.class);
-        System.out.println(response);
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("users/" + username + "/roles?roleName=user"), HttpMethod.POST, entity, String.class);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        
-        User userWithRole = userRepository.findByUsername("user_roleless");
-        
-        Set<Role> roles = userWithRole.getRoles();
+                
+        Set<Role> roles = userRepository.findByUsername(username).getRoles();
         roles.forEach(role -> {
         	assertEquals("ROLE_USER" , role.getName().toString());
-        });
-        
-        
+        });        
     }
     
     private String obtainAccessToken(String username, String password) throws Exception {
