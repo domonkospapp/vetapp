@@ -40,7 +40,7 @@ public class User {
 	@Size(max = 50)
 	@Email
 	private String email;
-	 
+
 	@NotBlank
 	@Size(min=6, max = 100)
 	private String password;
@@ -51,6 +51,12 @@ public class User {
 			joinColumns = @JoinColumn(name = "user_id"), 
 			inverseJoinColumns = @JoinColumn(name = "role_id"))
 	private Set<Role> roles = new HashSet<>();
+
+	@Size(min=3, max = 20)
+	private String phone;
+
+	@Size(min=3, max = 100)
+	private String address;
 	
 	public User() {}
 	 
@@ -59,6 +65,18 @@ public class User {
 		this.username = username;
 		this.email = email;
 		this.password = password;
+	}
+
+	public User(Long id, String name, String username, String email, String password, Set<Role> roles, String phone, String address) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.username = username;
+		this.email = email;
+		this.password = password;
+		this.roles = roles;
+		this.phone = phone;
+		this.address = address;
 	}
 
 	public Long getId() {
@@ -107,6 +125,22 @@ public class User {
 
 	public void setRoles(Set<Role> roles) {
 		this.roles = roles;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
 	}
 	 
 }
