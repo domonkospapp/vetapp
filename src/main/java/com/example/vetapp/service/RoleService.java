@@ -1,6 +1,5 @@
 package com.example.vetapp.service;
 
-import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,11 +33,6 @@ public class RoleService {
         roles.add(roleNameService.getRoleByName(roleName));
         user.setRoles(roles);
 		return userRepository.save(user);
-	}
-
-	public List<Role> get(String username) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	public void delete(String username, String roleId) {
