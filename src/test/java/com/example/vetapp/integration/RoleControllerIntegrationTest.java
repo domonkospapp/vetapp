@@ -155,6 +155,16 @@ public class RoleControllerIntegrationTest {
         assertEquals(RoleName.ROLE_USER, rolesFromBD.stream().findFirst().get().getName());
     }
     
+    @Test
+    public void admin_cant_delete_not_exist_role() throws Exception {
+    	String username = "user_roleless";
+        User user = new User("User Without Roles", username, "user2@gmail.com", encoder.encode(password));
+        userRepository.save(user);
+                
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("users/" + user.getUsername() + "/roles/" + "user"), HttpMethod.DELETE, entity, String.class);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+    
     private String obtainAccessToken(String username, String password) throws Exception {
     	HttpHeaders headers = creteHeader("Content-Type", "application/json");
     	String body = "{\"username\":\"" + username + "\", \"password\": \"" + password + "\"}";
