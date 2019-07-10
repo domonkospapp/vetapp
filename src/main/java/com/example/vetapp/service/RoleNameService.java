@@ -1,12 +1,14 @@
 package com.example.vetapp.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.example.vetapp.exception.NotFoundException;
 import com.example.vetapp.model.Role;
 import com.example.vetapp.model.RoleName;
 import com.example.vetapp.repository.RoleRepository;
 
+@Service
 public class RoleNameService {
 	
 	RoleRepository roleRepository;
