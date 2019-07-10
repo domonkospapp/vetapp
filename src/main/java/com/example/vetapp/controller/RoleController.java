@@ -30,12 +30,12 @@ public class RoleController {
     }
     
     @ResponseStatus(HttpStatus.NO_CONTENT)
-	@RequestMapping(value = "users/{userId}/roles/{roleId}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "users/{username}/roles/{role}", method = RequestMethod.DELETE)
     public void deleteMember(
     		@PathVariable("username") String username,
-    		@PathVariable("roleId") String roleId
+    		@PathVariable("role") String role
     ) {
-    	roleService.delete(username, roleId); 
+    	roleService.delete(username, role); 
     }
 
 }

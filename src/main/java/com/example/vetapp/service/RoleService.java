@@ -1,5 +1,6 @@
 package com.example.vetapp.service;
 
+import java.util.Iterator;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,9 +36,16 @@ public class RoleService {
 		return userRepository.save(user);
 	}
 
-	public void delete(String username, String roleId) {
-		// TODO Auto-generated method stub
-		
+	public void delete(String username, String role) {
+		User user = findUserByUsername(username);
+		for (Iterator<Role> iterator = user.getRoles().iterator(); iterator.hasNext();) {
+		    if (iterator.next().getName().equals(roleNameService.getRoleByName(role).getName())) {
+		        iterator.remove();
+		        userRepository.save(user);
+		        return;
+		    }
+		}
+		throw new NotFoundException("Role not found!");
 	}
 	
 	private User findUserByUsername(String username) {
