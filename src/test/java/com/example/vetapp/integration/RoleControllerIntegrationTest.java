@@ -2,9 +2,7 @@ package com.example.vetapp.integration;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.junit.After;
@@ -52,15 +50,19 @@ public class RoleControllerIntegrationTest {
 
     private String password = "password";
     
-    private String adminToken;
-    
+    private HttpEntity<?> entity;
+        
     @Before
     public void setup() throws Exception {
         Role adminRole = roleRepository.findByName(RoleName.ROLE_ADMIN).orElseThrow(() -> new RuntimeException("Fail! -> Cause: User Role not find."));                
         User admin = new User("Admin Admin", "admin", "admin@gmail.com", encoder.encode(password));         
         admin.setRoles(createRoleSet(adminRole));
         userRepository.save(admin);
-        adminToken = obtainAccessToken(admin.getUsername(), password);
+        String adminToken = obtainAccessToken(admin.getUsername(), password);
+        
+        HttpHeaders headers = creteHeader("Content-Type", "application/json");
+    	headers.add("Authorization", "Bearer " + adminToken); 
+        entity = new HttpEntity<Object>(headers);
     }
     
     @After
@@ -73,11 +75,7 @@ public class RoleControllerIntegrationTest {
     	String username = "user_roleless";
         User user = new User("User Without Roles", username, "user2@gmail.com", encoder.encode(password));
         userRepository.save(user);
-        
-        HttpHeaders headers = creteHeader("Content-Type", "application/json");
-    	headers.add("Authorization", "Bearer " + adminToken); 
-        HttpEntity<?> entity = new HttpEntity<Object>(headers);
-        
+                
         ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("users/" + username + "/roles?roleName=user"), HttpMethod.POST, entity, String.class);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
                 
@@ -93,10 +91,6 @@ public class RoleControllerIntegrationTest {
         User user = new User("User Without Roles", username, "user2@gmail.com", encoder.encode(password));
         userRepository.save(user);
         
-        HttpHeaders headers = creteHeader("Content-Type", "application/json");
-    	headers.add("Authorization", "Bearer " + adminToken); 
-        HttpEntity<?> entity = new HttpEntity<Object>(headers);
-
         restTemplate.exchange(createURLWithPort("users/" + username + "/roles?roleName=user"), HttpMethod.POST, entity, String.class);
         restTemplate.exchange(createURLWithPort("users/" + username + "/roles?roleName=doctor"), HttpMethod.POST, entity, String.class);
         restTemplate.exchange(createURLWithPort("users/" + username + "/roles?roleName=admin"), HttpMethod.POST, entity, String.class);
@@ -110,11 +104,7 @@ public class RoleControllerIntegrationTest {
     	String username = "user_roleless";
         User user = new User("User Without Roles", username, "user2@gmail.com", encoder.encode(password));
         userRepository.save(user);
-        
-        HttpHeaders headers = creteHeader("Content-Type", "application/json");
-    	headers.add("Authorization", "Bearer " + adminToken); 
-        HttpEntity<?> entity = new HttpEntity<Object>(headers);
-        
+                
         ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("users/" + username + "/roles?roleName=user"), HttpMethod.POST, entity, String.class);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
 
@@ -126,11 +116,7 @@ public class RoleControllerIntegrationTest {
     }
     
     @Test
-    public void admin_cant_add_role_with_wrong_username() throws Exception {        
-        HttpHeaders headers = creteHeader("Content-Type", "application/json");
-    	headers.add("Authorization", "Bearer " + adminToken); 
-        HttpEntity<?> entity = new HttpEntity<Object>(headers);
-        
+    public void admin_cant_add_role_with_wrong_username() throws Exception {                
         ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("users/not_user/roles?roleName=user"), HttpMethod.POST, entity, String.class);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
@@ -140,11 +126,7 @@ public class RoleControllerIntegrationTest {
     	String username = "user_roleless";
         User user = new User("User Without Roles", username, "user2@gmail.com", encoder.encode(password));
         userRepository.save(user);
-        
-        HttpHeaders headers = creteHeader("Content-Type", "application/json");
-    	headers.add("Authorization", "Bearer " + adminToken); 
-        HttpEntity<?> entity = new HttpEntity<Object>(headers);
-        
+                
         ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("users/" + username + "/roles?roleName=fake_role"), HttpMethod.POST, entity, String.class);       
         Set<Role> roles = userRepository.findByUsername(username).getRoles();
         
@@ -165,10 +147,6 @@ public class RoleControllerIntegrationTest {
         user.setRoles(roles);
         userRepository.save(user);
   
-        HttpHeaders headers = creteHeader("Content-Type", "application/json");
-    	headers.add("Authorization", "Bearer " + adminToken);
-        HttpEntity<?> entity = new HttpEntity<Object>(headers);
-
         ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("users/" + user.getUsername() + "/roles/" + "doctor"), HttpMethod.DELETE, entity, String.class);
         Set<Role> rolesFromBD = userRepository.findByUsername(username).getRoles();
 
