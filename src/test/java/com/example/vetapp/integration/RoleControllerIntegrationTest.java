@@ -76,7 +76,7 @@ public class RoleControllerIntegrationTest {
         User user = new User("User Without Roles", username, "user2@gmail.com", encoder.encode(password));
         userRepository.save(user);
                 
-        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("users/" + username + "/roles?roleName=user"), HttpMethod.POST, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("users/" + username + "/roles?role=user"), HttpMethod.POST, entity, String.class);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
                 
         Set<Role> roles = userRepository.findByUsername(username).getRoles();
@@ -91,9 +91,9 @@ public class RoleControllerIntegrationTest {
         User user = new User("User Without Roles", username, "user2@gmail.com", encoder.encode(password));
         userRepository.save(user);
         
-        restTemplate.exchange(createURLWithPort("users/" + username + "/roles?roleName=user"), HttpMethod.POST, entity, String.class);
-        restTemplate.exchange(createURLWithPort("users/" + username + "/roles?roleName=doctor"), HttpMethod.POST, entity, String.class);
-        restTemplate.exchange(createURLWithPort("users/" + username + "/roles?roleName=admin"), HttpMethod.POST, entity, String.class);
+        restTemplate.exchange(createURLWithPort("users/" + username + "/roles?role=user"), HttpMethod.POST, entity, String.class);
+        restTemplate.exchange(createURLWithPort("users/" + username + "/roles?role=doctor"), HttpMethod.POST, entity, String.class);
+        restTemplate.exchange(createURLWithPort("users/" + username + "/roles?role=admin"), HttpMethod.POST, entity, String.class);
                 
         Set<Role> roles = userRepository.findByUsername(username).getRoles();
         assertEquals(3 , roles.size());  
@@ -105,10 +105,10 @@ public class RoleControllerIntegrationTest {
         User user = new User("User Without Roles", username, "user2@gmail.com", encoder.encode(password));
         userRepository.save(user);
                 
-        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("users/" + username + "/roles?roleName=user"), HttpMethod.POST, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("users/" + username + "/roles?role=user"), HttpMethod.POST, entity, String.class);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
 
-        ResponseEntity<String> response2 = restTemplate.exchange(createURLWithPort("users/" + username + "/roles?roleName=user"), HttpMethod.POST, entity, String.class);
+        ResponseEntity<String> response2 = restTemplate.exchange(createURLWithPort("users/" + username + "/roles?role=user"), HttpMethod.POST, entity, String.class);
         assertEquals(HttpStatus.CONFLICT, response2.getStatusCode());
                 
         Set<Role> roles = userRepository.findByUsername(username).getRoles();
@@ -117,7 +117,7 @@ public class RoleControllerIntegrationTest {
     
     @Test
     public void admin_cant_add_role_with_wrong_username() throws Exception {                
-        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("users/not_user/roles?roleName=user"), HttpMethod.POST, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("users/not_user/roles?role=user"), HttpMethod.POST, entity, String.class);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
@@ -127,7 +127,7 @@ public class RoleControllerIntegrationTest {
         User user = new User("User Without Roles", username, "user2@gmail.com", encoder.encode(password));
         userRepository.save(user);
                 
-        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("users/" + username + "/roles?roleName=fake_role"), HttpMethod.POST, entity, String.class);       
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("users/" + username + "/roles?role=fake_role"), HttpMethod.POST, entity, String.class);       
         Set<Role> roles = userRepository.findByUsername(username).getRoles();
         
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());

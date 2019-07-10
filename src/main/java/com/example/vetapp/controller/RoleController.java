@@ -24,9 +24,9 @@ public class RoleController {
     @RequestMapping(value = "users/{username}/roles", method = RequestMethod.POST)
     public User addRole(
     	@PathVariable("username") String username,
-    	@RequestParam(value="roleName") String roleName
+    	@RequestParam(value="role") String role
     ){
-    	return roleService.save(username, roleName);
+    	return roleService.save(username, role);
     }
     
     @ResponseStatus(HttpStatus.NO_CONTENT)
