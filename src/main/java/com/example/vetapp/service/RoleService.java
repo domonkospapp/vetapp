@@ -1,7 +1,6 @@
 package com.example.vetapp.service;
 
 import java.util.Iterator;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,17 +29,14 @@ public class RoleService {
 	}
 
 	public User save(String username, String roleName) {
-		//roles refact
 		User user = findUserByUsername(username);
 		Role role = roleNameService.getRoleByName(roleName);
-		Set<Role> roles = user.getRoles();
-		roles.forEach(r -> {
+		user.getRoles().forEach(r -> {
 			if(r.getName().equals(role.getName())) {
 				throw new ConflictException("Role already added!");
 			}
 		});
-        roles.add(role);
-        user.setRoles(roles);
+		user.getRoles().add(role);
 		return userRepository.save(user);
 	}
 
