@@ -85,6 +85,24 @@ public class RoleControllerIntegrationTest {
         });        
     }
     
+    @Test
+    public void admin_can_add_all_roles() throws Exception {
+    	String username = "user_roleless";
+        User user = new User("User Without Roles", username, "user2@gmail.com", encoder.encode(password));
+        userRepository.save(user);
+        
+        HttpHeaders headers = creteHeader("Content-Type", "application/json");
+    	headers.add("Authorization", "Bearer " + adminToken); 
+        HttpEntity<?> entity = new HttpEntity<Object>(headers);
+
+        restTemplate.exchange(createURLWithPort("users/" + username + "/roles?roleName=user"), HttpMethod.POST, entity, String.class);
+        restTemplate.exchange(createURLWithPort("users/" + username + "/roles?roleName=doctor"), HttpMethod.POST, entity, String.class);
+        restTemplate.exchange(createURLWithPort("users/" + username + "/roles?roleName=admin"), HttpMethod.POST, entity, String.class);
+                
+        Set<Role> roles = userRepository.findByUsername(username).getRoles();
+        assertEquals(3 , roles.size());  
+    }
+    
     private String obtainAccessToken(String username, String password) throws Exception {
     	HttpHeaders headers = creteHeader("Content-Type", "application/json");
     	String body = "{\"username\":\"" + username + "\", \"password\": \"" + password + "\"}";
