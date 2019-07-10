@@ -106,6 +106,26 @@ public class RoleControllerIntegrationTest {
     }
     
     @Test
+    public void admin_cant_add_the_same_role_twice() throws Exception {
+    	String username = "user_roleless";
+        User user = new User("User Without Roles", username, "user2@gmail.com", encoder.encode(password));
+        userRepository.save(user);
+        
+        HttpHeaders headers = creteHeader("Content-Type", "application/json");
+    	headers.add("Authorization", "Bearer " + adminToken); 
+        HttpEntity<?> entity = new HttpEntity<Object>(headers);
+        
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("users/" + username + "/roles?roleName=user"), HttpMethod.POST, entity, String.class);
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+
+        ResponseEntity<String> response2 = restTemplate.exchange(createURLWithPort("users/" + username + "/roles?roleName=user"), HttpMethod.POST, entity, String.class);
+        assertEquals(HttpStatus.CONFLICT, response2.getStatusCode());
+                
+        Set<Role> roles = userRepository.findByUsername(username).getRoles();
+        assertEquals(1, roles.size());
+    }
+    
+    @Test
     public void admin_can_delete_role() throws Exception {
     	//create test user
     	String username = "user_with_roles";
@@ -117,7 +137,7 @@ public class RoleControllerIntegrationTest {
         roles.add(doctorRole);
         user.setRoles(roles);
         userRepository.save(user);
-                
+  
         HttpHeaders headers = creteHeader("Content-Type", "application/json");
     	headers.add("Authorization", "Bearer " + adminToken);
         HttpEntity<?> entity = new HttpEntity<Object>(headers);
