@@ -91,7 +91,7 @@ public class UserControllerIntegrationTest {
     	HttpHeaders headers = creteHeader("Authorization", "Bearer " + userToken);
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         
-        ResponseEntity<String> response =restTemplate.exchange(createURLWithPort("users/" + user.getName() + "?name=x&email=x&phone=x&address=x"), HttpMethod.PUT, entity, String.class);
+        ResponseEntity<String> response =restTemplate.exchange(createURLWithPort("users/" + user.getUsername() + "?name=xyz&phone=xyz&address=xyz"), HttpMethod.PUT, entity, String.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
     

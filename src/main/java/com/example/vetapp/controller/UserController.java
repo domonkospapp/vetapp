@@ -31,11 +31,10 @@ public class UserController {
     	Authentication authentication,
     	@PathVariable("username") String username,
     	@RequestParam(value="name") String name,
-    	@RequestParam(value="email") String email,
     	@RequestParam(value="phone") String phone,
     	@RequestParam(value="address") String address
     ){
-    	return userService.update(authentication, username, name, email, phone, address);
+    	return userService.update(authentication, username, name, phone, address);
     }
 	
 
