@@ -15,7 +15,7 @@ import com.example.vetapp.model.User;
 import com.example.vetapp.service.UserService;
 
 @RestController
-@PreAuthorize("hasRole('USER')")
+@PreAuthorize("hasRole('USER') or hasRole('DOCTOR') or hasRole('ADMIN')")
 public class UserController {
 	
 	UserService userService;
