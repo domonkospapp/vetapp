@@ -97,6 +97,23 @@ public class UserControllerIntegrationTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
     
+    @Test
+    public void user_cant_update_others_profile() throws Exception {
+        User otherUser = new User("Other User", "otheruser", "otheruser@gmail.com", encoder.encode(password));
+        userRepository.save(otherUser);
+
+    	HttpHeaders headers = creteHeader("Authorization", "Bearer " + userToken);
+        HttpEntity<String> entity = new HttpEntity<String>(null, headers);
+        
+        ResponseEntity<String> response =restTemplate.exchange(createURLWithPort("users/" + otherUser.getUsername() + "?name=xyz&phone=xyz&address=xyz"), HttpMethod.PUT, entity, String.class);
+        User otherUserFromDB = userRepository.findByUsername(otherUser.getUsername());
+
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+        assertEquals(otherUser.getName(), otherUserFromDB.getName());
+        assertEquals(otherUser.getPhone(), otherUserFromDB.getPhone());
+        assertEquals(otherUser.getAddress(), otherUserFromDB.getAddress());
+    }
+    
     private String obtainAccessToken(String username, String password) throws Exception {
     	HttpHeaders headers = creteHeader("Content-Type", "application/json");
     	String body = "{\"username\":\"" + username + "\", \"password\": \"" + password + "\"}";
