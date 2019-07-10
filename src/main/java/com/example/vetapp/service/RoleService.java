@@ -6,6 +6,7 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.vetapp.exception.ConflictException;
 import com.example.vetapp.exception.NotFoundException;
 import com.example.vetapp.model.Role;
 import com.example.vetapp.model.User;
@@ -29,9 +30,16 @@ public class RoleService {
 	}
 
 	public User save(String username, String roleName) {
+		//roles refact
 		User user = findUserByUsername(username);
+		Role role = roleNameService.getRoleByName(roleName);
 		Set<Role> roles = user.getRoles();
-        roles.add(roleNameService.getRoleByName(roleName));
+		roles.forEach(r -> {
+			if(r.getName().equals(role.getName())) {
+				throw new ConflictException("Role already added!");
+			}
+		});
+        roles.add(role);
         user.setRoles(roles);
 		return userRepository.save(user);
 	}
