@@ -126,6 +126,16 @@ public class RoleControllerIntegrationTest {
     }
     
     @Test
+    public void admin_cant_add_role_with_wrong_username() throws Exception {        
+        HttpHeaders headers = creteHeader("Content-Type", "application/json");
+    	headers.add("Authorization", "Bearer " + adminToken); 
+        HttpEntity<?> entity = new HttpEntity<Object>(headers);
+        
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("users/not_user/roles?roleName=user"), HttpMethod.POST, entity, String.class);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+    
+    @Test
     public void admin_can_delete_role() throws Exception {
     	//create test user
     	String username = "user_with_roles";
