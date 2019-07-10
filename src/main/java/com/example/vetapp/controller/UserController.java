@@ -1,5 +1,7 @@
 package com.example.vetapp.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,7 +17,6 @@ import com.example.vetapp.model.User;
 import com.example.vetapp.service.UserService;
 
 @RestController
-@PreAuthorize("hasRole('USER') or hasRole('DOCTOR') or hasRole('ADMIN')")
 public class UserController {
 	
 	UserService userService;
@@ -25,7 +26,8 @@ public class UserController {
 		this.userService = userService;
 	}
 
-    @ResponseStatus(HttpStatus.OK)
+	@PreAuthorize("hasRole('USER') or hasRole('DOCTOR') or hasRole('ADMIN')")
+	@ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "users/{username}", method = RequestMethod.PUT)
     public User updateUser(
     	Authentication authentication,
@@ -37,5 +39,11 @@ public class UserController {
     	return userService.update(authentication, username, name, phone, address);
     }
 	
-
+	@PreAuthorize("hasRole('DOCTOR') or hasRole('ADMIN')")
+	@ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "users", method = RequestMethod.GET)
+    public List<User> getUsers(){
+		return userService.getAll();
+    }
+	
 }
