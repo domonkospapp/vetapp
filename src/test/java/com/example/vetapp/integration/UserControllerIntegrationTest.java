@@ -51,33 +51,26 @@ public class UserControllerIntegrationTest {
     private String password = "password";
     
     private String userToken;
-    private String doctorToken;
     private String adminToken;
     
     private User user;
-    private User doctor;
     private User admin;
     
     @Before
     public void setup() throws Exception {
     	Role userRole = roleRepository.findByName(RoleName.ROLE_USER).orElseThrow(() -> new RuntimeException("Fail! -> Cause: User Role not find."));
-        Role doctorRole = roleRepository.findByName(RoleName.ROLE_DOCTOR).orElseThrow(() -> new RuntimeException("Fail! -> Cause: User Role not find."));
         Role adminRole = roleRepository.findByName(RoleName.ROLE_ADMIN).orElseThrow(() -> new RuntimeException("Fail! -> Cause: User Role not find."));                
 
         user = new User("User User", "user", "user@gmail.com", encoder.encode(password));
-        doctor = new User("Doctor Doctor", "doctor", "doctor@gmail.com", encoder.encode(password));
         admin = new User("Admin Admin", "admin", "admin@gmail.com", encoder.encode(password));
                 
         user.setRoles(createRoleSet(userRole));
-        doctor.setRoles(createRoleSet(doctorRole));
         admin.setRoles(createRoleSet(adminRole));
 
         userRepository.save(user);
-        userRepository.save(doctor);
         userRepository.save(admin);
 
         userToken = obtainAccessToken(user.getUsername(), password);
-        doctorToken = obtainAccessToken(doctor.getUsername(), password);
         adminToken = obtainAccessToken(admin.getUsername(), password);
     }
     
@@ -89,6 +82,15 @@ public class UserControllerIntegrationTest {
     @Test
     public void user_can_update_own_profile() throws Exception {
     	HttpHeaders headers = creteHeader("Authorization", "Bearer " + userToken);
+        HttpEntity<String> entity = new HttpEntity<String>(null, headers);
+        
+        ResponseEntity<String> response =restTemplate.exchange(createURLWithPort("users/" + user.getUsername() + "?name=xyz&phone=xyz&address=xyz"), HttpMethod.PUT, entity, String.class);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+    
+    @Test
+    public void admin_can_update_others_profile() throws Exception {
+    	HttpHeaders headers = creteHeader("Authorization", "Bearer " + adminToken);
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         
         ResponseEntity<String> response =restTemplate.exchange(createURLWithPort("users/" + user.getUsername() + "?name=xyz&phone=xyz&address=xyz"), HttpMethod.PUT, entity, String.class);
