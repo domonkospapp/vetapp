@@ -10,19 +10,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.example.vetapp.model.Role;
 import com.example.vetapp.model.User;
 import com.example.vetapp.service.RoleService;
 
 @PreAuthorize("hasRole('ADMIN')")
+@RestController
 public class RoleController {
 	
 	@Autowired
 	RoleService roleService;
 	
     @ResponseStatus(HttpStatus.CREATED)
-    @RequestMapping(value = "/{username}/roles", method = RequestMethod.POST)
+    @RequestMapping(value = "users/{username}/roles", method = RequestMethod.POST)
     public User addRole(
     	@PathVariable("username") String username,
     	@RequestParam(value="roleName") String roleName
@@ -31,7 +33,7 @@ public class RoleController {
     }
     
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/{username}/roles", method = RequestMethod.GET)
+    @RequestMapping(value = "users/{username}/roles", method = RequestMethod.GET)
     public List<Role> getRoles(
         	@PathVariable("username") String username
     ){
@@ -39,7 +41,7 @@ public class RoleController {
     }
     
     @ResponseStatus(HttpStatus.NO_CONTENT)
-	@RequestMapping(value = "/{userId}/roles/{roleId}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "users/{userId}/roles/{roleId}", method = RequestMethod.DELETE)
     public void deleteMember(
     		@PathVariable("username") String username,
     		@PathVariable("roleId") String roleId
