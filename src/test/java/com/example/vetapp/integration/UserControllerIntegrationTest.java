@@ -129,8 +129,11 @@ public class UserControllerIntegrationTest {
     	HttpHeaders headers = creteHeader("Authorization", "Bearer " + userToken);
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         
-        ResponseEntity<String> response =restTemplate.exchange(createURLWithPort("users/" + user.getUsername()), HttpMethod.GET, entity, String.class);
+        ResponseEntity<User> response =restTemplate.exchange(createURLWithPort("users/" + user.getUsername()), HttpMethod.GET, entity, User.class);
+        User userResult = response.getBody();    	
+        
         assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(user.getId(), userResult.getId());
     }
     
     private String obtainAccessToken(String username, String password) throws Exception {
