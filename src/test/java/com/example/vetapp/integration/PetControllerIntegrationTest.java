@@ -23,6 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.example.vetapp.model.Pet;
 import com.example.vetapp.model.Role;
 import com.example.vetapp.model.RoleName;
 import com.example.vetapp.model.User;
@@ -79,11 +80,18 @@ public class PetControllerIntegrationTest {
     
     @Test
     public void doctor_can_add_pet() throws Exception {
-    	ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("users/" + owner.getUsername() + "/pets?name=xyz&yearOfBirth=2019&type=doggo"), HttpMethod.POST, entity, String.class);
+    	Pet pet = new Pet("Pet Name", new Long(2019), "Doggo", null);
+    	
+    	restTemplate.exchange(createURLWithPort("users/" + owner.getUsername() + "/pets?name=" + pet.getName() + "&yearOfBirth=" + pet.getYearOfBirth() + "&type=" + pet.getType()), HttpMethod.POST, entity, String.class);
+    	ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("users/" + owner.getUsername() + "/pets?name=" + pet.getName() + "&yearOfBirth=" + pet.getYearOfBirth() + "&type=" + pet.getType()), HttpMethod.POST, entity, String.class);
     	User ownerFromDB = userRepository.findByUsername(owner.getUsername());
     	
     	assertEquals(HttpStatus.CREATED, response.getStatusCode());
-    	assertEquals(1, ownerFromDB.getPets().size());
+    	assertEquals(2, ownerFromDB.getPets().size());
+    	assertEquals(pet.getName(), ownerFromDB.getPets().get(0).getName());
+    	assertEquals(pet.getYearOfBirth(), ownerFromDB.getPets().get(0).getYearOfBirth());
+    	assertEquals(pet.getType(), ownerFromDB.getPets().get(0).getType());
+    	assertEquals(owner.getId(), ownerFromDB.getPets().get(0).getOwner().getId());
     }
     
     private String obtainAccessToken(String username, String password) throws Exception {
