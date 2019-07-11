@@ -1,8 +1,10 @@
 package com.example.vetapp.model;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
- 
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -11,12 +13,17 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
  
 import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 
 @Entity
@@ -58,6 +65,11 @@ public class User {
 	@Size(min=3, max = 100)
 	private String address;
 	
+	@JsonManagedReference
+	@OneToMany(mappedBy = "owner", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+	private List<Pet> pets;
+	
 	public User() {}
 	 
 	public User(String name, String username, String email, String password) {
@@ -67,7 +79,7 @@ public class User {
 		this.password = password;
 	}
 
-	public User(Long id, String name, String username, String email, String password, Set<Role> roles, String phone, String address) {
+	public User(Long id, String name, String username, String email, String password, Set<Role> roles, String phone, String address, List<Pet> pets) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -77,6 +89,7 @@ public class User {
 		this.roles = roles;
 		this.phone = phone;
 		this.address = address;
+		this.pets = pets;
 	}
 
 	public Long getId() {
@@ -141,6 +154,14 @@ public class User {
 
 	public void setAddress(String address) {
 		this.address = address;
+	}
+
+	public List<Pet> getPets() {
+		return pets;
+	}
+
+	public void setPets(List<Pet> pets) {
+		this.pets = pets;
 	}
 	 
 }
