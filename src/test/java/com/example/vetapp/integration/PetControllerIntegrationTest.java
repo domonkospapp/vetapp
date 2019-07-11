@@ -80,7 +80,10 @@ public class PetControllerIntegrationTest {
     @Test
     public void doctor_can_add_pet() throws Exception {
     	ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("users/" + owner.getUsername() + "/pets?name=xyz&yearOfBirth=2019&type=doggo"), HttpMethod.POST, entity, String.class);
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+    	User ownerFromDB = userRepository.findByUsername(owner.getUsername());
+    	
+    	assertEquals(HttpStatus.CREATED, response.getStatusCode());
+    	assertEquals(1, ownerFromDB.getPets().size());
     }
     
     private String obtainAccessToken(String username, String password) throws Exception {
