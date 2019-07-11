@@ -28,9 +28,7 @@ public class UserService {
 
 	public User update(Authentication authentication, String username, String name, String phone, String address) {
 		if(username.equals(authentication.getName()) || authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
-			User user = userRepository.findByUsername(username);
-			if(user == null)
-				throw new NotFoundException("User not found!");
+			User user = findUserByUsername(username);
 			user.setName(name);
 			user.setPhone(phone);
 			user.setAddress(address);
@@ -42,5 +40,12 @@ public class UserService {
 	public List<User> getAll() {
 		return userRepository.findAll();
 	}
-
+	
+	public User findUserByUsername(String username) {
+		User user = userRepository.findByUsername(username);
+		if(user == null)
+			throw new NotFoundException("User not found!");
+		return user;
+	}
+	
 }
