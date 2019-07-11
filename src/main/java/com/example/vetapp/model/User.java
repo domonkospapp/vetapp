@@ -3,7 +3,8 @@ package com.example.vetapp.model;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
- 
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -19,6 +20,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
  
 import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -63,7 +66,8 @@ public class User {
 	private String address;
 	
 	@JsonManagedReference
-	@OneToMany(mappedBy = "owner")
+	@OneToMany(mappedBy = "owner", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OnDelete(action = OnDeleteAction.CASCADE)
 	private List<Pet> pets;
 	
 	public User() {}
