@@ -124,6 +124,15 @@ public class UserControllerIntegrationTest {
         assertEquals(2, userRepository.findAll().size());
     }
     
+    @Test
+    public void usern_can_get_own_data() throws Exception {
+    	HttpHeaders headers = creteHeader("Authorization", "Bearer " + userToken);
+        HttpEntity<String> entity = new HttpEntity<String>(null, headers);
+        
+        ResponseEntity<String> response =restTemplate.exchange(createURLWithPort("users/" + user.getUsername()), HttpMethod.GET, entity, String.class);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+    
     private String obtainAccessToken(String username, String password) throws Exception {
     	HttpHeaders headers = creteHeader("Content-Type", "application/json");
     	String body = "{\"username\":\"" + username + "\", \"password\": \"" + password + "\"}";
