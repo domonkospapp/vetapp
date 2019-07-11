@@ -28,6 +28,16 @@ public class UserController {
 
 	@PreAuthorize("hasRole('USER') or hasRole('DOCTOR') or hasRole('ADMIN')")
 	@ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "users/{username}", method = RequestMethod.GET)
+    public User getUser(
+    	Authentication authentication,
+    	@PathVariable("username") String username
+    ){
+    	return userService.getUser(authentication, username);
+    }
+
+	@PreAuthorize("hasRole('USER') or hasRole('DOCTOR') or hasRole('ADMIN')")
+	@ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "users/{username}", method = RequestMethod.PUT)
     public User updateUser(
     	Authentication authentication,

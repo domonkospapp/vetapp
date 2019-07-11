@@ -47,5 +47,10 @@ public class UserService {
 			throw new NotFoundException("User not found!");
 		return user;
 	}
+
+	public User getUser(Authentication authentication, String username) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }
