@@ -11,6 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
@@ -30,6 +31,7 @@ public class Pet {
 	@Column
 	private String type;
 	
+	@JsonBackReference
 	@ManyToOne
 	private User owner;
 	
@@ -38,6 +40,14 @@ public class Pet {
 	private List<Case> cases;
 	
 	Pet(){}
+
+	public Pet(String name, Long yearOfBirth, String type, User owner) {
+		super();
+		this.name = name;
+		this.yearOfBirth = yearOfBirth;
+		this.type = type;
+		this.owner = owner;
+	}
 
 	public Pet(Long id, String name, Long yearOfBirth, String type, User owner, List<Case> cases) {
 		super();
