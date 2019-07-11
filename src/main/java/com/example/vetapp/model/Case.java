@@ -20,7 +20,7 @@ public class Case {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column
+	@ManyToOne
 	private User doctor;
 
 	@Column

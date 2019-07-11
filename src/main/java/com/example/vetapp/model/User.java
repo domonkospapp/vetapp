@@ -63,7 +63,7 @@ public class User {
 	private String address;
 	
 	@JsonManagedReference
-	@OneToMany(mappedBy = "user")
+	@OneToMany(mappedBy = "owner")
 	private List<Pet> pets;
 	
 	public User() {}
@@ -75,7 +75,7 @@ public class User {
 		this.password = password;
 	}
 
-	public User(Long id, String name, String username, String email, String password, Set<Role> roles, String phone, String address) {
+	public User(Long id, String name, String username, String email, String password, Set<Role> roles, String phone, String address, List<Pet> pets) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -85,6 +85,7 @@ public class User {
 		this.roles = roles;
 		this.phone = phone;
 		this.address = address;
+		this.pets = pets;
 	}
 
 	public Long getId() {
@@ -149,6 +150,14 @@ public class User {
 
 	public void setAddress(String address) {
 		this.address = address;
+	}
+
+	public List<Pet> getPets() {
+		return pets;
+	}
+
+	public void setPets(List<Pet> pets) {
+		this.pets = pets;
 	}
 	 
 }
