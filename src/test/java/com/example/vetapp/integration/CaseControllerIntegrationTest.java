@@ -113,6 +113,20 @@ public class CaseControllerIntegrationTest {
     	assertEquals(pet.getOwner().getId(), petFromDB.getCases().get(0).getPet().getOwner().getId());
     }
     
+    @Test
+    public void doctor_can_add_pet_not_exist_user() throws Exception {
+    	Case petCase = new Case(null, "case name", "case description", "10$", null);
+    	ResponseEntity<String> response = restTemplate.exchange(
+    			createURLWithPort(
+    					"users/" + "not_a_user" + "/pets/" + pet.getId() +
+    					"?name=" + petCase.getName() +
+    					"&description=" + petCase.getDescription() + 
+    					"&price=" + petCase.getPrice()
+    			), HttpMethod.POST, entity, String.class);
+    	    	
+    	assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+    
     private String obtainAccessToken(String username, String password) throws Exception {
     	HttpHeaders headers = creteHeader("Content-Type", "application/json");
     	String body = "{\"username\":\"" + username + "\", \"password\": \"" + password + "\"}";
