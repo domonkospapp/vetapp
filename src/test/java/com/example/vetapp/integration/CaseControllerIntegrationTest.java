@@ -98,7 +98,10 @@ public class CaseControllerIntegrationTest {
     					"&description=" + petCase.getDescription() + 
     					"&price=" + petCase.getPrice()
     			), HttpMethod.POST, entity, String.class);
+    	Pet petFromDB = userRepository.findByUsername(owner.getUsername()).getPets().get(0);
+    	
     	assertEquals(HttpStatus.CREATED, response.getStatusCode());
+    	assertEquals(1, petFromDB.getCases().size());
     }
     
     private String obtainAccessToken(String username, String password) throws Exception {
