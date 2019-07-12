@@ -90,7 +90,7 @@ public class CaseControllerIntegrationTest {
     }
     
     @Test
-    public void doctor_can_add_pet() throws Exception {
+    public void doctor_can_add_case() throws Exception {
     	Case petCase = new Case(null, "case name", "case description", "10$", null);
     	ResponseEntity<String> response = restTemplate.exchange(
     			createURLWithPort(
@@ -99,7 +99,6 @@ public class CaseControllerIntegrationTest {
     					"&description=" + petCase.getDescription() + 
     					"&price=" + petCase.getPrice()
     			), HttpMethod.POST, entity, String.class);
-    	
     	Pet petFromDB = userRepository.findByUsername(owner.getUsername()).getPets().get(0);
     	
     	assertEquals(HttpStatus.CREATED, response.getStatusCode());
@@ -114,7 +113,7 @@ public class CaseControllerIntegrationTest {
     }
     
     @Test
-    public void doctor_can_add_pet_not_exist_user() throws Exception {
+    public void doctor_cant_add_case_to_not_exist_user() throws Exception {
     	Case petCase = new Case(null, "case name", "case description", "10$", null);
     	ResponseEntity<String> response = restTemplate.exchange(
     			createURLWithPort(
@@ -123,7 +122,19 @@ public class CaseControllerIntegrationTest {
     					"&description=" + petCase.getDescription() + 
     					"&price=" + petCase.getPrice()
     			), HttpMethod.POST, entity, String.class);
-    	    	
+    	assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+    
+    @Test
+    public void doctor_cant_add_case_to_not_exist_pet() throws Exception {
+    	Case petCase = new Case(null, "case name", "case description", "10$", null);
+    	ResponseEntity<String> response = restTemplate.exchange(
+    			createURLWithPort(
+    					"users/" + owner.getUsername() + "/pets/" + new Long(404) +
+    					"?name=" + petCase.getName() +
+    					"&description=" + petCase.getDescription() + 
+    					"&price=" + petCase.getPrice()
+    			), HttpMethod.POST, entity, String.class);
     	assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
     
