@@ -23,8 +23,8 @@ import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 
 @Entity
 @Table(name = "users")
@@ -48,6 +48,7 @@ public class User {
 	@Email
 	private String email;
 
+	@JsonIgnore
 	@NotBlank
 	@Size(min=6, max = 100)
 	private String password;

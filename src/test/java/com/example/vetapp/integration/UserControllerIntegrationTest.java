@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,12 +23,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.skyscreamer.jsonassert.JSONAssert;
 
+import com.example.vetapp.model.Pet;
 import com.example.vetapp.model.Role;
 import com.example.vetapp.model.RoleName;
 import com.example.vetapp.model.User;
+import com.example.vetapp.repository.PetRepository;
 import com.example.vetapp.repository.RoleRepository;
 import com.example.vetapp.repository.UserRepository;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -48,6 +54,9 @@ public class UserControllerIntegrationTest {
 	@Autowired
 	RoleRepository roleRepository;
 
+	@Autowired
+	PetRepository petRepository;
+
     private String password = "password";
     
     private String userToken;
@@ -56,6 +65,8 @@ public class UserControllerIntegrationTest {
     private User user;
     private User admin;
     
+    Gson gson = new GsonBuilder().create();
+
     @Before
     public void setup() throws Exception {
     	Role userRole = roleRepository.findByName(RoleName.ROLE_USER).orElseThrow(() -> new RuntimeException("Fail! -> Cause: User Role not find."));
@@ -124,6 +135,63 @@ public class UserControllerIntegrationTest {
         assertEquals(2, userRepository.findAll().size());
     }
     
+    @Test
+    public void usern_can_get_own_data() throws Exception {
+    	HttpHeaders headers = creteHeader("Authorization", "Bearer " + userToken);
+        HttpEntity<String> entity = new HttpEntity<String>(null, headers);
+        
+        ResponseEntity<String> response =restTemplate.exchange(createURLWithPort("users/" + user.getUsername()), HttpMethod.GET, entity, String.class);
+        JSONObject jsonObject = new JSONObject(gson.toJson(user));
+        jsonObject.remove("password");
+        
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        JSONAssert.assertEquals(jsonObject.toString(), response.getBody(), false);    
+    }
+    
+    @Test
+    public void admin_can_get_others_data() throws Exception {
+        User otherUser = new User("Other User", "otheruser", "otheruser@gmail.com", encoder.encode(password));
+        userRepository.save(otherUser);
+
+    	HttpHeaders headers = creteHeader("Authorization", "Bearer " + adminToken);
+        HttpEntity<String> entity = new HttpEntity<String>(null, headers);
+        
+        ResponseEntity<String> response =restTemplate.exchange(createURLWithPort("users/" + otherUser.getUsername()), HttpMethod.GET, entity, String.class);
+        JSONObject jsonObject = new JSONObject(gson.toJson(otherUser));
+        jsonObject.remove("password");
+        
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        JSONAssert.assertEquals(jsonObject.toString(), response.getBody(), false);    
+    }
+    
+    @Test
+    public void usern_cant_get_others_data() throws Exception {
+        User otherUser = new User("Other User", "otheruser", "otheruser@gmail.com", encoder.encode(password));
+        userRepository.save(otherUser);
+
+    	HttpHeaders headers = creteHeader("Authorization", "Bearer " + userToken);
+        HttpEntity<String> entity = new HttpEntity<String>(null, headers);
+        
+        ResponseEntity<String> response =restTemplate.exchange(createURLWithPort("users/" + otherUser.getUsername()), HttpMethod.GET, entity, String.class);
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+    }
+    
+    @Test
+    public void usern_can_get_own_data_with_pets() throws Exception {
+    	petRepository.save(new Pet("Pet1", new Long(2019), "cat", user));
+    	petRepository.save(new Pet("Pet2", new Long(2019), "dog", user));
+
+    	HttpHeaders headers = creteHeader("Authorization", "Bearer " + userToken);
+        HttpEntity<String> entity = new HttpEntity<String>(null, headers);
+
+        ResponseEntity<String> response =restTemplate.exchange(createURLWithPort("users/" + user.getUsername()), HttpMethod.GET, entity, String.class);
+        JSONObject jsonObject = new JSONObject(gson.toJson(user));
+        jsonObject.remove("password");
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        JSONAssert.assertEquals(jsonObject.toString(), response.getBody(), false);    
+    }
+
     private String obtainAccessToken(String username, String password) throws Exception {
     	HttpHeaders headers = creteHeader("Content-Type", "application/json");
     	String body = "{\"username\":\"" + username + "\", \"password\": \"" + password + "\"}";
