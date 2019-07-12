@@ -149,6 +149,22 @@ public class UserControllerIntegrationTest {
     }
     
     @Test
+    public void admin_can_get_others_data() throws Exception {
+        User otherUser = new User("Other User", "otheruser", "otheruser@gmail.com", encoder.encode(password));
+        userRepository.save(otherUser);
+
+    	HttpHeaders headers = creteHeader("Authorization", "Bearer " + adminToken);
+        HttpEntity<String> entity = new HttpEntity<String>(null, headers);
+        
+        ResponseEntity<String> response =restTemplate.exchange(createURLWithPort("users/" + otherUser.getUsername()), HttpMethod.GET, entity, String.class);
+        JSONObject jsonObject = new JSONObject(gson.toJson(otherUser));
+        jsonObject.remove("password");
+        
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        JSONAssert.assertEquals(jsonObject.toString(), response.getBody(), false);    
+    }
+    
+    @Test
     public void usern_can_get_own_data_with_pets() throws Exception {
     	petRepository.save(new Pet("Pet1", new Long(2019), "cat", user));
     	petRepository.save(new Pet("Pet2", new Long(2019), "dog", user));
