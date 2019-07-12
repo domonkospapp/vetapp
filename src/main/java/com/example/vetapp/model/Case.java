@@ -41,6 +41,15 @@ public class Case {
 	
 	public Case() {}
 
+	public Case(User doctor, String name, String description, String price, Pet pet) {
+		super();
+		this.doctor = doctor;
+		this.name = name;
+		this.description = description;
+		this.price = price;
+		this.pet = pet;
+	}
+
 	public Case(Long id, User doctor, String name, String description, String price, Pet pet, Timestamp createDateTime) {
 		super();
 		this.id = id;
