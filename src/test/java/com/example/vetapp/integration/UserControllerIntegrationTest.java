@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,12 +23,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import com.example.vetapp.model.Role;
 import com.example.vetapp.model.RoleName;
 import com.example.vetapp.model.User;
 import com.example.vetapp.repository.RoleRepository;
 import com.example.vetapp.repository.UserRepository;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -56,6 +60,8 @@ public class UserControllerIntegrationTest {
     private User user;
     private User admin;
     
+    Gson gson = new GsonBuilder().create();
+
     @Before
     public void setup() throws Exception {
     	Role userRole = roleRepository.findByName(RoleName.ROLE_USER).orElseThrow(() -> new RuntimeException("Fail! -> Cause: User Role not find."));
@@ -129,11 +135,12 @@ public class UserControllerIntegrationTest {
     	HttpHeaders headers = creteHeader("Authorization", "Bearer " + userToken);
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         
-        ResponseEntity<User> response =restTemplate.exchange(createURLWithPort("users/" + user.getUsername()), HttpMethod.GET, entity, User.class);
-        User userResult = response.getBody();    	
+        ResponseEntity<String> response =restTemplate.exchange(createURLWithPort("users/" + user.getUsername()), HttpMethod.GET, entity, String.class);
+        JSONObject jsonObject = new JSONObject(gson.toJson(user));
+        jsonObject.remove("password");
         
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(user.getId(), userResult.getId());
+        JSONAssert.assertEquals(jsonObject.toString(), response.getBody(), false);    
     }
     
     private String obtainAccessToken(String username, String password) throws Exception {
