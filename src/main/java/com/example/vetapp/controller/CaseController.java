@@ -29,7 +29,7 @@ public class CaseController {
         @PathVariable("petId") String petId,
     	@RequestParam(value="name") String name,
     	@RequestParam(value="description") String description,
-    	@RequestParam(value="description") String price
+    	@RequestParam(value="price") String price
     ){
     	return caseService.save(authentication, username, petId, name, description, price);
     }
