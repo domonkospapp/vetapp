@@ -122,6 +122,24 @@ public class CaseControllerIntegrationTest {
     					"&description=" + petCase.getDescription() + 
     					"&price=" + petCase.getPrice()
     			), HttpMethod.POST, entity, String.class);
+    	
+    	assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+    
+    @Test
+    public void doctor_cant_add_case_to_oter_users_pet() throws Exception {
+    	User otherOwner = new User("Other User Owner", "otherowner", "otherowner@gmail.com", encoder.encode(password));
+        userRepository.save(otherOwner);
+    	
+    	Case petCase = new Case(null, "case name", "case description", "10$", null);
+    	ResponseEntity<String> response = restTemplate.exchange(
+    			createURLWithPort(
+    					"users/" + otherOwner.getUsername() + "/pets/" + pet.getId() +
+    					"?name=" + petCase.getName() +
+    					"&description=" + petCase.getDescription() + 
+    					"&price=" + petCase.getPrice()
+    			), HttpMethod.POST, entity, String.class);
+    	
     	assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
     
@@ -135,6 +153,7 @@ public class CaseControllerIntegrationTest {
     					"&description=" + petCase.getDescription() + 
     					"&price=" + petCase.getPrice()
     			), HttpMethod.POST, entity, String.class);
+    	
     	assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
     
