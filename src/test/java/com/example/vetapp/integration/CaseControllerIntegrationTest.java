@@ -59,13 +59,14 @@ public class CaseControllerIntegrationTest {
     //store auth token
     private HttpEntity<?> entity;
     
+    User doctor;
     private User owner;
     private Pet pet;
         
     @Before
     public void setup() throws Exception {
         Role doctorRole = roleRepository.findByName(RoleName.ROLE_DOCTOR).orElseThrow(() -> new RuntimeException("Fail! -> Cause: Doctor Role not find."));                
-        User doctor = new User("Doctor Doctor", "doctor", "doctor@gmail.com", encoder.encode(password));
+        doctor = new User("Doctor Doctor", "doctor", "doctor@gmail.com", encoder.encode(password));
         doctor.setRoles(createRoleSet(doctorRole));
         userRepository.save(doctor);
         String doctorToken = obtainAccessToken(doctor.getUsername(), password);
@@ -98,10 +99,18 @@ public class CaseControllerIntegrationTest {
     					"&description=" + petCase.getDescription() + 
     					"&price=" + petCase.getPrice()
     			), HttpMethod.POST, entity, String.class);
+    	
     	Pet petFromDB = userRepository.findByUsername(owner.getUsername()).getPets().get(0);
     	
     	assertEquals(HttpStatus.CREATED, response.getStatusCode());
     	assertEquals(1, petFromDB.getCases().size());
+
+    	assertEquals(petCase.getName(), petFromDB.getCases().get(0).getName());
+    	assertEquals(petCase.getDescription(), petFromDB.getCases().get(0).getDescription());
+    	assertEquals(petCase.getPrice(), petFromDB.getCases().get(0).getPrice());
+    	assertEquals(doctor.getId(), petFromDB.getCases().get(0).getDoctor().getId());
+    	assertEquals(pet.getId(), petFromDB.getCases().get(0).getPet().getId());
+    	assertEquals(pet.getOwner().getId(), petFromDB.getCases().get(0).getPet().getOwner().getId());
     }
     
     private String obtainAccessToken(String username, String password) throws Exception {
