@@ -21,9 +21,15 @@ public class UserService {
 	public void setUserRepository(UserRepository userRepository) {
 		this.userRepository = userRepository;
 	}
-	
-	public boolean existByUserId(Long id){
-		return userRepository.existsById(id);
+
+	public User getUser(Authentication authentication, String username) {
+		if(username.equals(authentication.getName()) ||
+			authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")) ||
+			authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_DOCTOR"))
+		) {
+			return findUserByUsername(username);
+		}
+		throw new PermissionDeniedException("Not allowed!");
 	}
 
 	public User update(Authentication authentication, String username, String name, String phone, String address) {
@@ -47,10 +53,9 @@ public class UserService {
 			throw new NotFoundException("User not found!");
 		return user;
 	}
-
-	public User getUser(Authentication authentication, String username) {
-		// TODO Auto-generated method stub
-		return null;
+	
+	public boolean existByUserId(Long id){
+		return userRepository.existsById(id);
 	}
 	
 }
