@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.vetapp.model.Pet;
+import com.example.vetapp.model.Case;
 import com.example.vetapp.service.CaseService;
 
 @RestController
@@ -23,10 +23,10 @@ public class CaseController {
 	@PreAuthorize("hasRole('DOCTOR') or hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "users/{username}/pets/{petId}", method = RequestMethod.POST)
-    public Pet addPet(
+    public Case addPet(
         Authentication authentication,
     	@PathVariable("username") String username,
-        @PathVariable("petId") String petId,
+        @PathVariable("petId") Long petId,
     	@RequestParam(value="name") String name,
     	@RequestParam(value="description") String description,
     	@RequestParam(value="price") String price
