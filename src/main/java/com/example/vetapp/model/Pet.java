@@ -2,6 +2,7 @@ package com.example.vetapp.model;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -11,6 +12,9 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -37,7 +41,8 @@ public class Pet {
 	private User owner;
 	
 	@JsonManagedReference
-	@OneToMany(mappedBy = "pet", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "pet", fetch = FetchType.EAGER, cascade = CascadeType.ALL)    
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	private List<Case> cases;
 	
 	Pet(){}
