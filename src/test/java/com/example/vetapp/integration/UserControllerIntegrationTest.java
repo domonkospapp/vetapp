@@ -25,9 +25,11 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.skyscreamer.jsonassert.JSONAssert;
 
+import com.example.vetapp.model.Pet;
 import com.example.vetapp.model.Role;
 import com.example.vetapp.model.RoleName;
 import com.example.vetapp.model.User;
+import com.example.vetapp.repository.PetRepository;
 import com.example.vetapp.repository.RoleRepository;
 import com.example.vetapp.repository.UserRepository;
 import com.google.gson.Gson;
@@ -51,6 +53,9 @@ public class UserControllerIntegrationTest {
 	
 	@Autowired
 	RoleRepository roleRepository;
+
+	@Autowired
+	PetRepository petRepository;
 
     private String password = "password";
     
@@ -143,6 +148,22 @@ public class UserControllerIntegrationTest {
         JSONAssert.assertEquals(jsonObject.toString(), response.getBody(), false);    
     }
     
+    @Test
+    public void usern_can_get_own_data_with_pets() throws Exception {
+    	petRepository.save(new Pet("Pet1", new Long(2019), "cat", user));
+    	petRepository.save(new Pet("Pet2", new Long(2019), "dog", user));
+
+    	HttpHeaders headers = creteHeader("Authorization", "Bearer " + userToken);
+        HttpEntity<String> entity = new HttpEntity<String>(null, headers);
+
+        ResponseEntity<String> response =restTemplate.exchange(createURLWithPort("users/" + user.getUsername()), HttpMethod.GET, entity, String.class);
+        JSONObject jsonObject = new JSONObject(gson.toJson(user));
+        jsonObject.remove("password");
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        JSONAssert.assertEquals(jsonObject.toString(), response.getBody(), false);    
+    }
+
     private String obtainAccessToken(String username, String password) throws Exception {
     	HttpHeaders headers = creteHeader("Content-Type", "application/json");
     	String body = "{\"username\":\"" + username + "\", \"password\": \"" + password + "\"}";
