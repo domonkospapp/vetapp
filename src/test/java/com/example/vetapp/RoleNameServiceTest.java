@@ -1,5 +1,7 @@
 package com.example.vetapp;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.util.Optional;
 
 import org.junit.Before;
@@ -47,8 +49,9 @@ public class RoleNameServiceTest {
 	}
 
 	@Test
-	public void getRoleByName() {
-
+	public void getRoleByName_user() {
+		Role role = roleNameService.getRoleByName("user");
+		assertThat(role.getName()).isEqualTo(RoleName.ROLE_USER);
 	}
 
 }
