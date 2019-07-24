@@ -18,7 +18,7 @@ public class RoleNameService {
 		this.roleRepository = roleRepository;
 	}
 	
-	Role getRoleByName(String roleName) {
+	public Role getRoleByName(String roleName) {
 		switch(roleName) {
 	        case "admin":
 	          return roleRepository.findByName(RoleName.ROLE_ADMIN)
