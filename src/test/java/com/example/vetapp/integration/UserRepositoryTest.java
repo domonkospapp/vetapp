@@ -41,5 +41,23 @@ public class UserRepositoryTest {
 		
 		assertThat(foundUser).isEqualTo(null);
 	}
+	
+	@Test
+	public void when_existsByUsername_return_true() {
+		User user = new User("Test Test", "test", "mail@mail.com", "password");
+		entityManager.persist(user);
+		entityManager.flush();
+
+		boolean found = userRepository.existsByUsername(user.getUsername());
+		
+		assertThat(found).isEqualTo(true);
+	}
+	
+	@Test
+	public void when_existsByUsername_return_false() {
+		boolean found = userRepository.existsByUsername("username");
+		
+		assertThat(found).isEqualTo(false);
+	}
 
 }
