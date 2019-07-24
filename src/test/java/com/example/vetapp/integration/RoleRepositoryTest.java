@@ -38,5 +38,11 @@ public class RoleRepositoryTest {
         Role foundRole = roleRepository.findByName(RoleName.ROLE_DOCTOR).orElse(null);
 		assertThat(foundRole.getName()).isEqualTo(RoleName.ROLE_DOCTOR);
 	}
+	
+	@Test
+	public void when_find_RoleAdmin() {
+        Role foundRole = roleRepository.findByName(RoleName.ROLE_ADMIN).orElse(null);
+		assertThat(foundRole.getName()).isEqualTo(RoleName.ROLE_ADMIN);
+	}
 
 }
