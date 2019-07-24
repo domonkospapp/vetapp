@@ -14,6 +14,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.example.vetapp.exception.NotFoundException;
 import com.example.vetapp.model.Role;
 import com.example.vetapp.model.RoleName;
 import com.example.vetapp.repository.RoleRepository;
@@ -64,6 +65,11 @@ public class RoleNameServiceTest {
 	public void getRoleByName_admin() {
 		Role role = roleNameService.getRoleByName("admin");
 		assertThat(role.getName()).isEqualTo(RoleName.ROLE_ADMIN);
+	}
+
+	@Test(expected = NotFoundException.class)
+	public void getRoleByName_with_not_valid_role() {
+		roleNameService.getRoleByName("adminn");
 	}
 
 }
