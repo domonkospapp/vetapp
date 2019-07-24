@@ -54,4 +54,10 @@ public class RoleNameServiceTest {
 		assertThat(role.getName()).isEqualTo(RoleName.ROLE_USER);
 	}
 
+	@Test
+	public void getRoleByName_doctor() {
+		Role role = roleNameService.getRoleByName("doctor");
+		assertThat(role.getName()).isEqualTo(RoleName.ROLE_DOCTOR);
+	}
+
 }
