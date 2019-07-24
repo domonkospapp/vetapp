@@ -52,11 +52,29 @@ public class UserRepositoryTest {
 		
 		assertThat(found).isEqualTo(true);
 	}
-	
+
 	@Test
 	public void when_existsByUsername_return_false() {
 		boolean found = userRepository.existsByUsername("username");
 		
+		assertThat(found).isEqualTo(false);
+	}
+
+	@Test
+	public void when_existsByEmail_return_true() {
+		User user = new User("Test Test", "test", "mail@mail.com", "password");
+		entityManager.persist(user);
+		entityManager.flush();
+
+		boolean found = userRepository.existsByEmail(user.getEmail());
+
+		assertThat(found).isEqualTo(true);
+	}
+
+	@Test
+	public void when_existsByEmail_return_false() {
+		boolean found = userRepository.existsByEmail("mail@mail.com");
+
 		assertThat(found).isEqualTo(false);
 	}
 
