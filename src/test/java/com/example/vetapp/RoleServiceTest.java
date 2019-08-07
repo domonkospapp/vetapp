@@ -76,7 +76,6 @@ public class RoleServiceTest {
 		user.getRoles().add(userRole);
 
 		Mockito.when(userRepository.findByUsername(user.getUsername())).thenReturn(user);
-		Mockito.when(userRepository.save(user)).thenReturn(user);
 
 		roleService.save(user.getUsername(), "user");
 	}
