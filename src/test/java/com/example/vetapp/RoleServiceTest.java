@@ -13,6 +13,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.example.vetapp.exception.ConflictException;
 import com.example.vetapp.model.Role;
 import com.example.vetapp.model.RoleName;
 import com.example.vetapp.model.User;
@@ -67,6 +68,17 @@ public class RoleServiceTest {
 
 		assertThat(userWithRole.getRoles().size()).isEqualTo(1);
 		assertThat(userWithRole.getRoles().contains(userRole)).isEqualTo(true);
+	}
+
+	@Test(expected = ConflictException.class)
+	public void save_exists_role() {
+		User user = new User("Test User", "test_user", "test@test.com", "password");
+		user.getRoles().add(userRole);
+
+		Mockito.when(userRepository.findByUsername(user.getUsername())).thenReturn(user);
+		Mockito.when(userRepository.save(user)).thenReturn(user);
+
+		roleService.save(user.getUsername(), "user");
 	}
 
 }
