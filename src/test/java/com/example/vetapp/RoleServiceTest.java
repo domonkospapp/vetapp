@@ -80,4 +80,17 @@ public class RoleServiceTest {
 		roleService.save(user.getUsername(), "user");
 	}
 
+	@Test
+	public void delete_exists_role() {
+		User user = new User("Test User", "test_user", "test@test.com", "password");
+		user.getRoles().add(userRole);
+
+		Mockito.when(userRepository.findByUsername(user.getUsername())).thenReturn(user);
+		Mockito.when(userRepository.save(user)).thenReturn(user);
+
+		roleService.delete(user.getUsername(), "user");
+
+		assertThat(user.getRoles().size()).isEqualTo(0);
+	}
+
 }
