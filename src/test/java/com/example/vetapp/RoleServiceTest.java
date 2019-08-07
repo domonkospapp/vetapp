@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.example.vetapp.exception.ConflictException;
+import com.example.vetapp.exception.NotFoundException;
 import com.example.vetapp.model.Role;
 import com.example.vetapp.model.RoleName;
 import com.example.vetapp.model.User;
@@ -91,6 +92,16 @@ public class RoleServiceTest {
 		roleService.delete(user.getUsername(), "user");
 
 		assertThat(user.getRoles().size()).isEqualTo(0);
+	}
+
+	@Test(expected = NotFoundException.class)
+	public void delete_not_exists_role() {
+		User user = new User("Test User", "test_user", "test@test.com", "password");
+
+		Mockito.when(userRepository.findByUsername(user.getUsername())).thenReturn(user);
+		Mockito.when(userRepository.save(user)).thenReturn(user);
+
+		roleService.delete(user.getUsername(), "user");
 	}
 
 }
